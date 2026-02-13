@@ -344,6 +344,48 @@ body{
 .memory-photo:nth-child(even) { transform: rotate(-4deg); }
 .memory-photo:nth-child(3n) { transform: rotate(2deg); }
 
+
+/* ========================================== */
+/* KODINGAN TAMBAHAN UNTUK MOBILE FRIENDLY    */
+/* ========================================== */
+@media screen and (max-width: 768px) {
+    .title { font-size: 26px !important; margin-bottom: 15px !important; }
+    .subtitle { font-size: 11px !important; margin-bottom: 30px !important; padding: 0 15px; line-height: 1.5; }
+
+    .start-btn-container { transform: scale(0.8); }
+
+    .envelope-container { width: 280px !important; height: 280px !important; }
+    .envelope-container::before { width: 200px !important; height: 200px !important; }
+    .letter-text { font-size: 12px !important; top: -60px !important; width: 120% !important; }
+    .sub-letter-text { font-size: 9px !important; bottom: -80px !important; width: 140% !important; line-height: 1.8 !important;}
+    .cat-image { width: 180px !important; }
+
+    .password-box { 
+        right: 50% !important; 
+        transform: translateX(50%) !important; 
+        bottom: 30px !important; 
+        width: 90%;
+        justify-content: center;
+    }
+    .input-pwd { width: 65% !important; font-size: 10px !important; padding: 12px !important; }
+    .btn-pwd { padding: 12px 15px !important; font-size: 10px !important; }
+
+    .menu-container { width: 85% !important; }
+    .menu-btn { font-size: 12px !important; padding: 15px !important; }
+    
+    .rpg-box { padding: 20px !important; width: 90% !important; }
+    .typewriter-text { font-size: 10px !important; min-height: 200px !important; }
+    .rpg-cat { width: 70px !important; right: -10px !important; top: -45px !important; }
+
+    .wrong-img { width: 180px !important; }
+    .wrong-text { font-size: 12px !important; padding: 0 10px; }
+    .emot-melet { font-size: 40px !important; }
+
+    .back-btn { width: 80px !important; bottom: 15px !important; left: 15px !important; }
+    
+    #gameTarget { font-size: 40px !important; }
+}
+
 </style>
 </head>
 <body>
@@ -465,6 +507,7 @@ body{
 
 <script>
 
+// --- LIST FOTO 1 SAMPAI 70 MANUAL (.jpg) ---
 const photos = [
     "foto1.jpg", "foto2.jpg", "foto3.jpg", "foto4.jpg", "foto5.jpg",
     "foto6.jpg", "foto7.jpg", "foto8.jpg", "foto9.jpg", "foto10.jpg",
@@ -489,6 +532,7 @@ let salahBerapaKali = 0;
 function goNext(){
     document.getElementById("page1").classList.add("hidden");
     document.getElementById("page2").classList.remove("hidden");
+    playMusicWithFade(); // Backup trigger play music
 }
 
 function openEnvelope(){
@@ -812,10 +856,9 @@ function goBackToPage2(){
 
 const bgMusic = new Audio('lagu.mp3');
 bgMusic.loop = true; 
-bgMusic.volume = 0; // Mulai dari volume 0 (suara redup/hilang)
+bgMusic.volume = 0; 
 let isMusicPlaying = false;
 
-// Fungsi untuk play dengan efek fade-in pelan-pelan
 function playMusicWithFade() {
     if (isMusicPlaying) return;
     bgMusic.play().then(() => {
@@ -824,29 +867,21 @@ function playMusicWithFade() {
         let fadeInterval = setInterval(() => {
             if (vol < 1.0) {
                 vol += 0.05; 
-                bgMusic.volume = Math.min(vol, 1.0); // Mentok di volume normal (1.0)
+                bgMusic.volume = Math.min(vol, 1.0); 
             } else {
                 clearInterval(fadeInterval);
             }
-        }, 150); // Kecepatan suara naik
+        }, 150); 
     }).catch(err => {
         console.log("Browser menahan autoplay. Lagu akan menyala saat tombol start diklik.");
     });
 }
 
-// Lagu otomatis menyala 2.5 detik setelah web dibuka
 window.addEventListener('load', () => {
     setTimeout(() => {
         playMusicWithFade();
     }, 2500);
 });
-
-// Menyisipkan perintah play musik ke fungsi goNext yang sudah ada
-const fungsiGoNextLama = goNext;
-goNext = function() {
-    fungsiGoNextLama(); // Tetap jalankan animasi pindah halaman
-    playMusicWithFade(); // Tambahan: play lagu (sebagai backup jika autoplay diblokir browser)
-};
 
 </script>
 </body>
