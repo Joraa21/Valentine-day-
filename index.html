@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Bilqis</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    height:100vh;
+    background:url("background.gif") no-repeat center center;
+    background-size:cover;
+    font-family:'Press Start 2P', cursive;
+    overflow:hidden;
+    color:white;
+    user-select: none;
+}
+
+/* PAGE CONFIGURATION */
+.page{
+    position:absolute;
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    transition:0.8s ease-in-out; 
+    z-index: 10;
+}
+
+.hidden{
+    opacity:0;
+    pointer-events:none;
+    transform:scale(1.1);
+}
+
+.title {
+    font-size:40px; 
+    margin-bottom:20px; 
+    text-shadow: 4px 4px 0px #000; 
+    text-align: center;
+    animation: floatTitle 3s ease-in-out infinite alternate;
+}
+@keyframes floatTitle {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-5px); text-shadow: 4px 8px 0px #000; }
+}
+
+.subtitle{font-size:16px;margin-bottom:50px; text-shadow: 2px 2px 0px #000; text-align: center;}
+
+/* START BUTTON (SVG PIXEL) DENGAN ANIMASI DETAK */
+.start-btn-container {
+    cursor: pointer;
+    transition: transform 0.2s;
+    filter: drop-shadow(0 5px 0 #3e0e20);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: pulseBtn 1.5s infinite alternate;
+}
+
+@keyframes pulseBtn {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.08); filter: drop-shadow(0 10px 0 #3e0e20); }
+}
+
+.start-btn-container:hover {
+    transform: scale(1.15) rotate(-3deg);
+    animation: none; 
+}
+
+.start-btn-container:active {
+    transform: scale(0.95);
+    filter: drop-shadow(0 2px 0 #3e0e20);
+}
+
+.play-icon path { shape-rendering: crispEdges; }
+
+/* ENVELOPE CONFIGURATION */
+.envelope-container{
+    position:relative;
+    width:350px;
+    height:350px;
+    cursor:pointer;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    transition: opacity 0.5s ease;
+}
+
+.floating { animation: floatAnim 3s ease-in-out infinite; }
+@keyframes floatAnim {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+}
+
+.envelope-container::before {
+    content: ''; position: absolute; width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(255, 42, 109, 0.6) 0%, rgba(0,0,0,0) 70%);
+    z-index: -1; border-radius: 50%; animation: pulseGlow 2s infinite alternate;
+}
+
+@keyframes pulseGlow {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    100% { transform: scale(1.3); opacity: 1; }
+}
+
+.envelope{ position:absolute; width:100%; transition: all 0.6s ease-in-out; }
+
+/* TULISAN & GAMBAR DI SURAT */
+.letter-text {
+    position: absolute; top: -90px; width: 150%; text-align: center; font-size: 16px; 
+    line-height: 1.5; color: #ffffff; text-shadow: 2px 2px 0px #ff2a6d, 4px 4px 0px #000;
+    z-index: 25; transition: all 0.6s ease-in-out; pointer-events: none;
+    left: 50%; transform: translateX(-50%) scale(0.5); opacity: 0; 
+}
+.cat-image {
+    position: absolute; width: 240px; z-index: 26; transition: all 0.6s ease-in-out;
+    pointer-events: none; top: 45%; left: 50%; transform: translate(-50%, -50%) scale(0.5); opacity: 0;
+}
+.sub-letter-text {
+    position: absolute; bottom: -120px; width: 150%; text-align: center; font-size: 14px;
+    line-height: 1.5; color: #ffffff; text-shadow: 2px 2px 0px #ff2a6d, 4px 4px 0px #000;
+    z-index: 27; transition: all 0.6s ease-in-out; pointer-events: none;
+    left: 50%; transform: translateX(-50%) scale(0.5); opacity: 0;
+}
+
+/* DEKORASI KUCING BACKGROUND */
+.cat-decorations { position: absolute; width: 100%; height: 100%; pointer-events: none; z-index: 4; }
+.hide-deco { opacity: 0; transition: opacity 2s ease-in-out; }
+.show-deco { opacity: 1; }
+.static-paw {
+    position: absolute; width: 50px; height: 50px; opacity: 0.6;
+    animation: floatAnim 4s ease-in-out infinite alternate; filter: drop-shadow(0 0 10px rgba(255, 42, 109, 0.8));
+}
+
+.hide{ opacity:0; transform:scale(0.5) rotate(-10deg); pointer-events: none; }
+.show{ opacity:1; transform:scale(1) rotate(0deg); }
+
+#img2.show { transform: scale(1.3); z-index: 20; }
+#letterText.show { transform: translateX(-50%) scale(1.3); opacity: 1; z-index: 25; }
+#catImage.show { transform: translate(-50%, -50%) scale(1.3); opacity: 1; z-index: 26; }
+#subLetterText.show { transform: translateX(-50%) scale(1.3); opacity: 1; z-index: 27; }
+
+/* SPARKLES */
+.sparkle {
+    position: absolute; width: 8px; height: 8px; background-color: white;
+    box-shadow: 0 0 10px white, 0 0 20px #ff9ec3; animation: twinkle 1.5s infinite alternate; z-index: 5;
+}
+.sparkle::before, .sparkle::after { content: ''; position: absolute; background-color: white; }
+.sparkle::before { top: -4px; left: 2px; width: 4px; height: 16px; }
+.sparkle::after { top: 2px; left: -4px; width: 16px; height: 4px; }
+@keyframes twinkle { 0% { opacity: 0.1; transform: scale(0.6); } 100% { opacity: 1; transform: scale(1.2); } }
+
+/* LOVE & PAW EXPLOSION AWAL */
+.love{ position:absolute; animation:eruption forwards; z-index: 5; pointer-events: none; }
+@keyframes eruption{
+    0%{ transform:translate(0,0) scale(0.5); opacity:1; }
+    40%{ transform:translate(var(--xSpread), var(--yUp)) scale(1.2); opacity:1; }
+    100%{ transform:translate(var(--xSpread), 900px) scale(1); opacity:1; }
+}
+
+/* PHOTO WRAPPER */
+.photo-wrapper{ position:absolute; animation:fall linear forwards; z-index: 2; pointer-events: none; }
+@keyframes fall{ 0%{ transform:translateY(-150px) rotate(0deg); } 100%{ transform:translateY(110vh) rotate(360deg); } }
+
+/* BACK BUTTON */
+.back-btn{ position:fixed; bottom:20px; left:20px; width:150px; cursor:pointer; z-index: 20; transition: transform 0.2s, opacity 0.5s ease; }
+.back-btn:hover{ transform: scale(1.1); }
+.back-btn img{ width:100%; }
+
+/* --- PASSWORD --- */
+.password-box {
+    position: fixed; bottom: 20px; right: 20px; display: flex; gap: 10px; align-items: center;
+    z-index: 30; opacity: 0; pointer-events: none; transition: opacity 1s ease-in-out;
+}
+.password-box.show-pwd { opacity: 1; pointer-events: auto; }
+.input-pwd {
+    font-family: 'Press Start 2P', cursive; background: rgba(0, 0, 0, 0.6); border: 2px solid #ff2a6d;
+    color: white; padding: 10px; font-size: 10px; outline: none; width: 140px; text-align: center; transition: 0.3s;
+}
+.input-pwd::placeholder { color: #ff9ec3; opacity: 0.7; }
+.btn-pwd {
+    font-family: 'Press Start 2P', cursive; background: #ff2a6d; border: 2px solid white;
+    color: white; padding: 10px 15px; font-size: 10px; cursor: pointer; transition: 0.2s;
+}
+.btn-pwd:hover { background: #ff9ec3; color: #3e0e20; }
+
+/* MENU */
+.menu-container { display: flex; flex-direction: column; gap: 20px; width: 300px; z-index: 20;}
+.menu-btn {
+    font-family: 'Press Start 2P', cursive; background: rgba(255, 42, 109, 0.2); border: 3px solid #ff2a6d;
+    color: white; padding: 20px; font-size: 14px; text-align: left; cursor: pointer; transition: all 0.3s ease;
+    text-shadow: 2px 2px 0px #000; box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
+}
+.menu-btn:hover { background: #ff2a6d; transform: scale(1.05) translateX(10px); box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.8); }
+
+/* EFEK SALAH PASSWORD: SHAKE DIPERHALUS */
+.shake-gentle { animation: gentleShake 0.3s ease-in-out infinite; }
+@keyframes gentleShake {
+    0% { transform: translate(2px, 2px) rotate(0deg); }
+    20% { transform: translate(-2px, -2px) rotate(-1deg); }
+    40% { transform: translate(-3px, 0px) rotate(1deg); }
+    60% { transform: translate(3px, 2px) rotate(0deg); }
+    80% { transform: translate(-2px, -1px) rotate(1deg); }
+    100% { transform: translate(2px, 2px) rotate(-1deg); }
+}
+
+/* OVERLAY PASSWORD SALAH NGESELIN (HUKUMAN) */
+.wrong-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(139, 0, 0, 0.85); display: flex; justify-content: center; align-items: center;
+    flex-direction: column; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.wrong-overlay.show-error { 
+    opacity: 1; pointer-events: auto;
+    animation: flashBackground 0.2s infinite alternate; 
+}
+@keyframes flashBackground {
+    0% { background: rgba(139, 0, 0, 0.7); }
+    100% { background: rgba(255, 0, 0, 0.9); }
+}
+
+.wrong-img {
+    width: 250px; 
+    border: 6px solid #fff; 
+    outline: 6px solid #ff2a6d; 
+    box-shadow: 12px 12px 0px #000; 
+    background: #ff9ec3; 
+    padding: 5px; 
+    image-rendering: pixelated; 
+    animation: ngeledekAnim 0.4s infinite alternate;
+}
+
+@keyframes ngeledekAnim {
+    0% { transform: scale(0.9) rotate(-5deg); } 
+    100% { transform: scale(1.1) rotate(5deg); }
+}
+
+.wrong-text {
+    margin-top: 30px; color: #fff; text-shadow: 3px 3px 0 #000, -2px -2px 0 #000;
+    font-size: 16px; text-align: center; line-height: 1.8;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.emot-melet { display: inline-block; font-size: 60px; margin-top: 20px; animation: meletGoyang 0.3s infinite alternate; }
+@keyframes meletGoyang { 0% { transform: scale(1) rotate(-15deg); } 100% { transform: scale(1.3) rotate(15deg); } }
+
+.hukuman-text { margin-top: 15px; font-size: 10px; color: yellow; animation: blink 1s infinite; text-shadow: 2px 2px 0px #000; }
+@keyframes blink { 0%, 100%{opacity: 1;} 50%{opacity: 0;} }
+
+/* EFEK LOVE BOMB (PWD BENAR) */
+.love-bomb { position: absolute; z-index: 900; pointer-events: none; animation: bombExplode forwards; }
+@keyframes bombExplode {
+    0% { transform: translate(0, 0) scale(0.1); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) scale(var(--s)); opacity: 0; }
+}
+
+/* MINI GAME CSS */
+#gameTarget { position: absolute; font-size: 50px; cursor: pointer; transition: top 0.2s, left 0.2s; user-select: none; filter: drop-shadow(0 4px 0 #3e0e20); z-index: 50; }
+#gameTarget:active { transform: scale(0.8); }
+
+/* --- LETTER PAGE (RPG STYLE) --- */
+.rpg-box {
+    background: rgba(0, 0, 0, 0.85);
+    border: 4px solid #ff2a6d;
+    box-shadow: inset 0 0 10px #ff9ec3, 0 0 15px #ff2a6d;
+    padding: 30px;
+    width: 85%;
+    max-width: 600px;
+    position: relative;
+    border-radius: 8px;
+    z-index: 10;
+}
+.rpg-cat {
+    position: absolute;
+    top: -60px;
+    right: -20px;
+    width: 90px;
+    animation: floatAnim 3s infinite alternate;
+    image-rendering: pixelated;
+}
+.typewriter-text {
+    font-size: 12px;
+    line-height: 2;
+    color: #fff;
+    text-shadow: 2px 2px 0px #000;
+    min-height: 250px; 
+    text-align: left;
+}
+
+/* --- MEMORY PAGE (MARQUEE) --- */
+.marquee-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+    overflow: hidden;
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 5;
+}
+.marquee-row {
+    display: flex;
+    white-space: nowrap;
+    width: max-content;
+}
+/* Baris ganjil gerak ke kiri, genap gerak ke kanan */
+.marquee-left { animation: scrollLeft 25s linear infinite; }
+.marquee-right { animation: scrollRight 25s linear infinite; }
+
+@keyframes scrollLeft { 
+    0% { transform: translateX(0); } 
+    100% { transform: translateX(-50%); } 
+}
+@keyframes scrollRight { 
+    0% { transform: translateX(-50%); } 
+    100% { transform: translateX(0); } 
+}
+
+.memory-photo {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 4px solid #fff;
+    border-bottom: 18px solid #fff; 
+    margin: 0 10px;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.6);
+    display: inline-block;
+}
+.memory-photo:nth-child(odd) { transform: rotate(4deg); }
+.memory-photo:nth-child(even) { transform: rotate(-4deg); }
+.memory-photo:nth-child(3n) { transform: rotate(2deg); }
+
+</style>
+</head>
+<body>
+
+<div class="page" id="page1">
+    <div class="title">Bilqis 💗</div>
+    <div class="subtitle">My Love and My Forever Valentine</div>
+    
+    <div class="start-btn-container" onclick="goNext()">
+        <svg width="140" height="105" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="play-icon">
+            <path d="M6 4H8V6H10V8H12V10H14V12H12V14H10V16H8V18H6V4Z" fill="#222" transform="scale(1.2) translate(-2, -2.5)"/>
+            <path d="M6 5H8V7H10V9H12V11H10V13H8V15H6V5Z" fill="#ff2a6d" transform="scale(1.2) translate(-2, -2.5)"/>
+            <path d="M6 5H8V15H6V5ZM6 5H10V7H6V5Z" fill="#ff9ec3" transform="scale(1.2) translate(-2, -2.5)"/>
+        </svg>
+    </div>
+</div>
+
+<div class="page hidden" id="page2">
+
+    <div class="sparkle" style="top: 15%; left: 15%; animation-delay: 0.2s;"></div>
+    <div class="sparkle" style="top: 25%; right: 20%; animation-delay: 0.5s;"></div>
+    <div class="sparkle" style="bottom: 25%; left: 25%; animation-delay: 1.1s;"></div>
+    <div class="sparkle" style="bottom: 35%; right: 15%; animation-delay: 0.8s;"></div>
+    <div class="sparkle" style="top: 10%; right: 40%; animation-delay: 1.5s;"></div>
+    <div class="sparkle" style="bottom: 15%; right: 45%; animation-delay: 0.3s;"></div>
+
+    <div id="catDecorations" class="cat-decorations hide-deco">
+        <svg class="static-paw" style="top: 15%; left: 12%; transform: rotate(-25deg);" viewBox="0 0 24 24" fill="#ff9ec3" shape-rendering="crispEdges">
+            <rect x="4" y="5" width="4" height="5" /><rect x="10" y="3" width="4" height="5" /><rect x="16" y="5" width="4" height="5" /><rect x="5" y="12" width="14" height="7" /><rect x="7" y="19" width="10" height="2" /><rect x="3" y="14" width="2" height="3" /><rect x="19" y="14" width="2" height="3" />
+        </svg>
+        <svg class="static-paw" style="top: 20%; right: 15%; transform: rotate(30deg); animation-delay: 0.5s;" viewBox="0 0 24 24" fill="#ff2a6d" shape-rendering="crispEdges">
+            <rect x="4" y="5" width="4" height="5" /><rect x="10" y="3" width="4" height="5" /><rect x="16" y="5" width="4" height="5" /><rect x="5" y="12" width="14" height="7" /><rect x="7" y="19" width="10" height="2" /><rect x="3" y="14" width="2" height="3" /><rect x="19" y="14" width="2" height="3" />
+        </svg>
+        <svg class="static-paw" style="bottom: 25%; left: 15%; transform: rotate(-40deg); animation-delay: 1s;" viewBox="0 0 24 24" fill="#ff2a6d" shape-rendering="crispEdges">
+            <rect x="4" y="5" width="4" height="5" /><rect x="10" y="3" width="4" height="5" /><rect x="16" y="5" width="4" height="5" /><rect x="5" y="12" width="14" height="7" /><rect x="7" y="19" width="10" height="2" /><rect x="3" y="14" width="2" height="3" /><rect x="19" y="14" width="2" height="3" />
+        </svg>
+        <svg class="static-paw" style="bottom: 15%; right: 18%; transform: rotate(20deg); animation-delay: 1.5s;" viewBox="0 0 24 24" fill="#ff9ec3" shape-rendering="crispEdges">
+            <rect x="4" y="5" width="4" height="5" /><rect x="10" y="3" width="4" height="5" /><rect x="16" y="5" width="4" height="5" /><rect x="5" y="12" width="14" height="7" /><rect x="7" y="19" width="10" height="2" /><rect x="3" y="14" width="2" height="3" /><rect x="19" y="14" width="2" height="3" />
+        </svg>
+    </div>
+
+    <div class="envelope-container floating" id="envelopeBox" onclick="openEnvelope()">
+        <img src="amplop.gif" id="img1" class="envelope show">
+        <div id="letterText" class="letter-text">Happy Valentine Baby!!</div>
+        <img src="surat2.png" id="img2" class="envelope hide">
+        <img src="kucing.png" id="catImage" class="cat-image" alt="Cute Cat">
+        <div id="subLetterText" class="sub-letter-text">lets movie deto &lt;3<br>i will pick up u TOMMORROW at 04.00 PM</div>
+    </div>
+
+    <div class="password-box" id="passwordBox">
+        <input type="text" id="pwdInput" class="input-pwd" placeholder="Password?" onkeypress="handleEnter(event)">
+        <button class="btn-pwd" id="pwdBtn" onclick="cekPassword()">GO</button>
+    </div>
+
+    <div class="back-btn" id="backBtn2" onclick="goBack()">
+        <img src="Back.png" alt="Back">
+    </div>
+
+</div>
+
+<div class="wrong-overlay" id="wrongOverlay">
+    <img src="image_a30001.png" alt="Salah Woi!" class="wrong-img">
+    <div class="wrong-text">
+        DASAR DISAPPOINTING!!!!!!!
+        <br>
+        <span class="emot-melet">😜😝</span>
+    </div>
+    <div class="hukuman-text">TUNGGU 5 DETIK!</div>
+</div>
+
+<div class="page hidden" id="page3">
+    <div class="title" style="font-size: 24px; margin-bottom: 40px; color: #ff9ec3;">Next Destination 🎀</div>
+    
+    <div class="menu-container">
+        <button class="menu-btn" onclick="pilihMenu('letter')">1. Letter</button>
+        <button class="menu-btn" onclick="pilihMenu('memory')">2. Memorys</button>
+        <button class="menu-btn" onclick="pilihMenu('game')">3. Mini game</button>
+    </div>
+
+    <div class="back-btn" onclick="goBackToPage2()">
+        <img src="Back.png" alt="Back">
+    </div>
+</div>
+
+<div class="page hidden" id="page-letter">
+    <div class="title" style="font-size: 24px; color: #ff9ec3; margin-bottom: 40px;">A Letter For You 💌</div>
+    
+    <div class="rpg-box">
+        <img src="kucing.png" class="rpg-cat" alt="Meow">
+        <div id="typewriterText" class="typewriter-text"></div>
+    </div>
+
+    <div class="back-btn" onclick="goBackToMenuFrom('page-letter')">
+        <img src="Back.png" alt="Back">
+    </div>
+</div>
+
+<div class="page hidden" id="page-memory">
+    <div class="title" style="font-size: 24px; color: #ff2a6d; position: absolute; top: 40px; z-index: 50; text-shadow: 2px 2px 0px #fff;">Our Memorys 📸</div>
+    
+    <div class="marquee-container" id="marqueeContainer">
+        </div>
+
+    <div class="back-btn" onclick="goBackToMenuFrom('page-memory')" style="z-index: 50;">
+        <img src="Back.png" alt="Back">
+    </div>
+</div>
+
+<div class="page hidden" id="page-minigame">
+    <div class="title" style="font-size: 24px; margin-bottom: 10px; color: #ff2a6d;">Catch the Heart!</div>
+    <div class="subtitle" id="scoreBoard" style="color: #ff9ec3;">Score: 0</div>
+    
+    <div id="gameTarget" onclick="catchHeart(event)">💖</div>
+
+    <div class="back-btn" onclick="goBackFromGame()">
+        <img src="Back.png" alt="Back">
+    </div>
+</div>
+
+<script>
+
+const photos = [
+    "foto1.jpg", "foto2.jpg", "foto3.jpg", "foto4.jpg", "foto5.jpg",
+    "foto6.jpg", "foto7.jpg", "foto8.jpg", "foto9.jpg", "foto10.jpg",
+    "foto11.jpg", "foto12.jpg", "foto13.jpg", "foto14.jpg", "foto15.jpg",
+    "foto16.jpg", "foto17.jpg", "foto18.jpg", "foto19.jpg", "foto20.jpg",
+    "foto21.jpg", "foto22.jpg", "foto23.jpg", "foto24.jpg", "foto25.jpg",
+    "foto26.jpg", "foto27.jpg", "foto28.jpg", "foto29.jpg", "foto30.jpg",
+    "foto31.jpg", "foto32.jpg", "foto33.jpg", "foto34.jpg", "foto35.jpg",
+    "foto36.jpg", "foto37.jpg", "foto38.jpg", "foto39.jpg", "foto40.jpg",
+    "foto41.jpg", "foto42.jpg", "foto43.jpg", "foto44.jpg", "foto45.jpg",
+    "foto46.jpg", "foto47.jpg", "foto48.jpg", "foto49.jpg", "foto50.jpg",
+    "foto51.jpg", "foto52.jpg", "foto53.jpg", "foto54.jpg", "foto55.jpg",
+    "foto56.jpg", "foto57.jpg", "foto58.jpg", "foto59.jpg", "foto60.jpg",
+    "foto61.jpg", "foto62.jpg", "foto63.jpg", "foto64.jpg", "foto65.jpg",
+    "foto66.jpg", "foto67.jpg", "foto68.jpg", "foto69.jpg", "foto70.jpg"
+];
+
+let isOpened = false; 
+let photoInterval; 
+let salahBerapaKali = 0; 
+
+function goNext(){
+    document.getElementById("page1").classList.add("hidden");
+    document.getElementById("page2").classList.remove("hidden");
+}
+
+function openEnvelope(){
+    if(isOpened) return;
+    isOpened = true;
+
+    const envelopeBox = document.getElementById("envelopeBox");
+    const img1 = document.getElementById("img1");
+    const img2 = document.getElementById("img2");
+    const letterText = document.getElementById("letterText");
+    const catImage = document.getElementById("catImage");
+    const subLetterText = document.getElementById("subLetterText");
+    const catDecorations = document.getElementById("catDecorations");
+    const passwordBox = document.getElementById("passwordBox");
+
+    envelopeBox.classList.remove("floating");
+    img1.classList.remove("show");
+    img1.classList.add("hide");
+    img2.classList.remove("hide");
+    img2.classList.add("show");
+    letterText.classList.add("show");
+    catImage.classList.add("show");
+    subLetterText.classList.add("show");
+    catDecorations.classList.remove("hide-deco");
+    catDecorations.classList.add("show-deco");
+
+    passwordBox.classList.add("show-pwd");
+
+    for(let i=0;i<60;i++){ createLove(); }
+    for(let i=0;i<40;i++){ createPaw(); }
+
+    photoInterval = setInterval(spawnPhoto, 800); 
+}
+
+function handleEnter(e){
+    if(e.key === 'Enter'){
+        cekPassword();
+    }
+}
+
+function cekPassword() {
+    const input = document.getElementById("pwdInput").value.trim().toLowerCase();
+    const passwordBenar = "ikiscayanganetamajola:1"; 
+    const btn = document.getElementById("pwdBtn");
+    const pwdInputElem = document.getElementById("pwdInput");
+
+    if(input === "") return;
+
+    if (input === passwordBenar) {
+        salahBerapaKali = 0; 
+        btn.innerHTML = "BENAR! 💖";
+        btn.style.background = "#fff";
+        btn.style.color = "#ff2a6d";
+        btn.style.transform = "scale(1.1)";
+        pwdInputElem.disabled = true;
+
+        setTimeout(() => { triggerLoveBomb(); }, 800);
+
+    } else {
+        salahBerapaKali++;
+        if(salahBerapaKali >= 3) {
+            triggerHukumanLayarDiam();
+        } else {
+            triggerSalahBiasa();
+        }
+    }
+}
+
+function triggerSalahBiasa() {
+    document.body.classList.add("shake-gentle");
+    const pwdInput = document.getElementById("pwdInput");
+    
+    pwdInput.style.backgroundColor = "rgba(255,0,0,0.5)";
+    
+    setTimeout(() => {
+        document.body.classList.remove("shake-gentle");
+        pwdInput.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+        pwdInput.value = ""; 
+    }, 500);
+}
+
+function triggerHukumanLayarDiam() {
+    const overlay = document.getElementById("wrongOverlay");
+    const pwdInput = document.getElementById("pwdInput");
+    const pwdBtn = document.getElementById("pwdBtn");
+
+    pwdInput.disabled = true;
+    pwdBtn.disabled = true;
+    pwdInput.value = "";
+    
+    overlay.classList.add("show-error");
+
+    setTimeout(() => {
+        overlay.classList.remove("show-error");
+        pwdInput.disabled = false;
+        pwdBtn.disabled = false;
+        
+        salahBerapaKali = 0; 
+        pwdInput.focus(); 
+    }, 5000);
+}
+
+function triggerLoveBomb() {
+    document.getElementById("passwordBox").style.opacity = "0";
+    document.getElementById("backBtn2").style.opacity = "0";
+    document.getElementById("envelopeBox").style.opacity = "0";
+
+    for(let i=0; i<150; i++){ createBombParticle(); }
+
+    setTimeout(() => {
+        document.getElementById("page2").classList.add("hidden");
+        document.getElementById("page3").classList.remove("hidden");
+    }, 2000);
+}
+
+function createBombParticle() {
+    const heart = document.createElement("div");
+    heart.classList.add("love-bomb");
+    heart.innerHTML = `<svg viewBox="0 0 32 29" shape-rendering="crispEdges"><path fill="#ff2a6d" d="M8 0 H24 V4 H28 V8 H32 V16 H28 V20 H24 V24 H20 V28 H12 V24 H8 V20 H4 V16 H0 V8 H4 V4 H8 Z"/><path fill="#ff9ec3" d="M8 4 H24 V8 H28 V16 H24 V20 H20 V24 H12 V20 H8 V16 H4 V8 H8 Z"/></svg>`;
+    const size = 15 + Math.random() * 35; 
+    heart.style.width = size + "px"; heart.style.height = size + "px";
+    heart.style.left = "50%"; heart.style.top = "50%";
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 200 + Math.random() * 800;
+    heart.style.setProperty('--tx', (Math.cos(angle) * distance) + "px");
+    heart.style.setProperty('--ty', (Math.sin(angle) * distance) + "px");
+    heart.style.setProperty('--s', (0.5 + Math.random() * 1.5)); 
+    const duration = 1 + Math.random() * 1; heart.style.animationDuration = duration + "s";
+    document.body.appendChild(heart); setTimeout(() => heart.remove(), duration * 1000);
+}
+
+// --- MENU & NAVIGASI BARU ---
+function pilihMenu(menuType) {
+    document.getElementById("page3").classList.add("hidden");
+    
+    if(menuType === 'letter') { 
+        document.getElementById("page-letter").classList.remove("hidden");
+        startTypewriter();
+    }
+    else if(menuType === 'memory') { 
+        document.getElementById("page-memory").classList.remove("hidden");
+        generateMemoryRows();
+    }
+    else if(menuType === 'game') { 
+        document.getElementById("page-minigame").classList.remove("hidden");
+        startGame();
+    }
+}
+
+function goBackToMenuFrom(pageId) {
+    document.getElementById(pageId).classList.add("hidden");
+    document.getElementById("page3").classList.remove("hidden");
+}
+
+// --- LOGIKA LETTER ---
+const suratUntukBilqis = "Happy Valentine, Bibub!!! You’re the reason my days feel warmer and more colorful—your smile, your yapping, your teasing, and your presence make me fall crazier for you every day. Thank you for always being the lovely Bilqis you are; it’s only been 288 days since the day we became us, and I will always, always love YOU!!!!.............. 💖"; 
+let iText = 0;
+let isTyping = false;
+
+function startTypewriter() {
+    document.getElementById("typewriterText").innerHTML = "";
+    iText = 0;
+    if(isTyping) return;
+    isTyping = true;
+    typeWriterEffect();
+}
+
+function typeWriterEffect() {
+    if (iText < suratUntukBilqis.length) {
+        let char = suratUntukBilqis.charAt(iText);
+        if(char === '\n') {
+            document.getElementById("typewriterText").innerHTML += "<br>";
+        } else {
+            document.getElementById("typewriterText").innerHTML += char;
+        }
+        iText++;
+        setTimeout(typeWriterEffect, 60); 
+    } else {
+        isTyping = false;
+    }
+}
+
+// --- LOGIKA MEMORYS ---
+let memoryGenerated = false;
+
+function generateMemoryRows() {
+    if(memoryGenerated) return; 
+    memoryGenerated = true;
+    
+    const container = document.getElementById("marqueeContainer");
+    
+    for(let i = 0; i < 5; i++) {
+        const row = document.createElement("div");
+        if(i % 2 === 0) {
+            row.className = "marquee-row marquee-left";
+        } else {
+            row.className = "marquee-row marquee-right";
+        }
+
+        let rowPhotos = "";
+        for(let j = 0; j < 10; j++) {
+            const randomPic = photos[Math.floor(Math.random() * photos.length)];
+            rowPhotos += `<img src="${randomPic}" class="memory-photo" alt="memory">`;
+        }
+        
+        row.innerHTML = rowPhotos + rowPhotos; 
+        container.appendChild(row);
+    }
+}
+
+// --- LOGIKA MINI GAME ---
+let gameScore = 0;
+let gameInterval;
+
+function startGame() {
+    gameScore = 0;
+    document.getElementById("scoreBoard").innerText = "Score: " + gameScore;
+    moveTarget();
+    gameInterval = setInterval(moveTarget, 1200);
+}
+
+function moveTarget() {
+    const target = document.getElementById("gameTarget");
+    const maxX = window.innerWidth - 80;
+    const maxY = window.innerHeight - 150;
+    const x = Math.max(20, Math.random() * maxX);
+    const y = Math.max(150, Math.random() * maxY); 
+
+    target.style.left = x + "px";
+    target.style.top = y + "px";
+}
+
+function catchHeart(event) {
+    gameScore++;
+    document.getElementById("scoreBoard").innerText = "Score: " + gameScore;
+    createLoveExplosionAt(event.clientX, event.clientY);
+    
+    moveTarget();
+    clearInterval(gameInterval);
+    const newSpeed = Math.max(400, 1200 - (gameScore * 50)); 
+    gameInterval = setInterval(moveTarget, newSpeed);
+}
+
+function createLoveExplosionAt(x, y) {
+    for(let i=0; i<8; i++){
+        const heart = document.createElement("div");
+        heart.classList.add("love-bomb");
+        heart.innerHTML = `<svg viewBox="0 0 32 29" shape-rendering="crispEdges"><path fill="#ff2a6d" d="M8 0 H24 V4 H28 V8 H32 V16 H28 V20 H24 V24 H20 V28 H12 V24 H8 V20 H4 V16 H0 V8 H4 V4 H8 Z"/></svg>`;
+        
+        const size = 15 + Math.random() * 20; 
+        heart.style.width = size + "px"; heart.style.height = size + "px";
+        
+        heart.style.left = (x - size/2) + "px"; 
+        heart.style.top = (y - size/2) + "px";
+        
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 40 + Math.random() * 80;
+        heart.style.setProperty('--tx', (Math.cos(angle) * distance) + "px");
+        heart.style.setProperty('--ty', (Math.sin(angle) * distance) + "px");
+        heart.style.setProperty('--s', (0.5 + Math.random() * 1)); 
+        const duration = 0.5 + Math.random() * 0.5; 
+        heart.style.animationDuration = duration + "s";
+        
+        document.body.appendChild(heart); 
+        setTimeout(() => heart.remove(), duration * 1000);
+    }
+}
+
+function goBackFromGame() {
+    clearInterval(gameInterval);
+    document.getElementById("page-minigame").classList.add("hidden");
+    document.getElementById("page3").classList.remove("hidden");
+}
+
+// --- EFEK ANIMASI ---
+function createLove(){
+    const love = document.createElement("div"); love.classList.add("love");
+    love.innerHTML = `<svg viewBox="0 0 32 29" shape-rendering="crispEdges"><path fill="#8B0000" d="M8 0 H24 V4 H28 V8 H32 V16 H28 V20 H24 V24 H20 V28 H12 V24 H8 V20 H4 V16 H0 V8 H4 V4 H8 Z"/><path fill="#ff1a1a" d="M8 4 H24 V8 H28 V16 H24 V20 H20 V24 H12 V20 H8 V16 H4 V8 H8 Z"/></svg>`;
+    love.style.width = "90px"; love.style.height = "90px";
+    love.style.setProperty('--xSpread',(Math.random()*1600-800)+"px"); love.style.setProperty('--yUp',(-Math.random()*600-200)+"px");
+    love.style.left="50%"; love.style.top="50%"; love.style.animationDuration=(3+Math.random()*2)+"s";
+    document.body.appendChild(love); setTimeout(()=>love.remove(),5000);
+}
+
+function createPaw(){
+    const paw = document.createElement("div"); paw.classList.add("love"); 
+    paw.innerHTML = `<svg viewBox="0 0 24 24" shape-rendering="crispEdges"><rect x="4" y="5" width="4" height="5" fill="#ff9ec3" /><rect x="10" y="3" width="4" height="5" fill="#ff9ec3" /><rect x="16" y="5" width="4" height="5" fill="#ff9ec3" /><rect x="5" y="12" width="14" height="7" fill="#ff2a6d" /><rect x="7" y="19" width="10" height="2" fill="#ff2a6d" /><rect x="3" y="14" width="2" height="3" fill="#ff2a6d" /><rect x="19" y="14" width="2" height="3" fill="#ff2a6d" /></svg>`;
+    const size = 30 + Math.random()*40; paw.style.width = size + "px"; paw.style.height = size + "px";
+    paw.style.setProperty('--xSpread',(Math.random()*1600-800)+"px"); paw.style.setProperty('--yUp',(-Math.random()*600-200)+"px");
+    paw.style.left="50%"; paw.style.top="50%"; paw.style.transform = `translate(0,0) rotate(${Math.random() * 360}deg)`;
+    paw.style.animationDuration=(3+Math.random()*2)+"s"; document.body.appendChild(paw); setTimeout(()=>paw.remove(),5000);
+}
+
+function spawnPhoto(){
+    const wrapper = document.createElement("div"); wrapper.classList.add("photo-wrapper");
+    const size = 120 + Math.random()*100; wrapper.style.width = size + "px"; wrapper.style.height = size + "px";
+    wrapper.style.left = Math.random()*(window.innerWidth - size) + "px"; wrapper.style.animationDuration = (5 + Math.random()*5) + "s";
+    const randomPhoto = photos[Math.floor(Math.random()*photos.length)]; const uniqueId = "mask" + Math.floor(Math.random()*1000000);
+    const heartPath = "M8 4 H24 V8 H28 V16 H24 V20 H20 V24 H12 V20 H8 V16 H4 V8 H8 Z";
+    wrapper.innerHTML = `<svg viewBox="0 0 32 29" width="100%" height="100%" shape-rendering="crispEdges"><defs><mask id="${uniqueId}"><rect width="100%" height="100%" fill="black"/><path fill="white" d="${heartPath}"/></mask></defs><image href="${randomPhoto}" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" mask="url(#${uniqueId})"/><path fill="none" stroke="#ff2a6d" stroke-width="2" d="${heartPath}"/><path fill="none" stroke="#ff9ec3" stroke-width="1" d="${heartPath}" transform="scale(0.95) translate(0.8, 0.8)"/></svg>`;
+    document.body.appendChild(wrapper); wrapper.addEventListener("animationend",()=>{ wrapper.remove(); });
+}
+
+function goBack(){ location.reload(); }
+
+function goBackToPage2(){
+    document.getElementById("page3").classList.add("hidden");
+    document.getElementById("page2").classList.remove("hidden");
+    document.getElementById("pwdInput").value = "";
+    document.getElementById("pwdInput").disabled = false;
+    const btn = document.getElementById("pwdBtn");
+    btn.innerHTML = "GO"; btn.style.background = "#ff2a6d"; btn.style.color = "white"; btn.style.transform = "scale(1)";
+    document.getElementById("passwordBox").style.opacity = "1";
+    document.getElementById("backBtn2").style.opacity = "1";
+    document.getElementById("envelopeBox").style.opacity = "1";
+}
+
+// ==========================================
+// KODINGAN TAMBAHAN UNTUK LAGU & AUTOPLAY
+// ==========================================
+
+const bgMusic = new Audio('lagu.mp3');
+bgMusic.loop = true; 
+bgMusic.volume = 0; // Mulai dari volume 0 (suara redup/hilang)
+let isMusicPlaying = false;
+
+// Fungsi untuk play dengan efek fade-in pelan-pelan
+function playMusicWithFade() {
+    if (isMusicPlaying) return;
+    bgMusic.play().then(() => {
+        isMusicPlaying = true;
+        let vol = 0;
+        let fadeInterval = setInterval(() => {
+            if (vol < 1.0) {
+                vol += 0.05; 
+                bgMusic.volume = Math.min(vol, 1.0); // Mentok di volume normal (1.0)
+            } else {
+                clearInterval(fadeInterval);
+            }
+        }, 150); // Kecepatan suara naik
+    }).catch(err => {
+        console.log("Browser menahan autoplay. Lagu akan menyala saat tombol start diklik.");
+    });
+}
+
+// Lagu otomatis menyala 2.5 detik setelah web dibuka
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        playMusicWithFade();
+    }, 2500);
+});
+
+// Menyisipkan perintah play musik ke fungsi goNext yang sudah ada
+const fungsiGoNextLama = goNext;
+goNext = function() {
+    fungsiGoNextLama(); // Tetap jalankan animasi pindah halaman
+    playMusicWithFade(); // Tambahan: play lagu (sebagai backup jika autoplay diblokir browser)
+};
+
+</script>
+</body>
+</html>
